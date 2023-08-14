@@ -8,17 +8,45 @@
     <!-- Include the Chart.js library with the moment adapter -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+    <style>
+        header {
+            background-color: #222;
+            color: #fff;
+            text-align: center; /* Center-align the header content */
+            padding: 2em; /* Increase padding for a bigger banner */
+            
+        }
+
+        header ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        header ul li {
+            margin-right: 20px;
+        }
+
+        header ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Financial Stocks Website</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/stocks/sp500">S&P500</a></li>
+                <li><a href="/stocks/ibex35">IBEX35</a></li>
+                <li><a href="/stocks/nasdq">NASDQ</a></li>
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/stocks">Stocks</a></li>
-        </ul>
-    </nav>
     <section class="content">
         <h2>Stock Data for {{ stock_symbol }}</h2>
         <div class="chart-container">
@@ -31,8 +59,7 @@
         var stockPrices = {{ stock_prices|tojson|safe }};
     </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-    
-
 </body>
 </html>
+
+

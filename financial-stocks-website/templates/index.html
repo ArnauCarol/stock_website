@@ -3,21 +3,47 @@
 <head>
     <title>Financial Stocks Website</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        header {
+            background-color: #222;
+            color: #fff;
+            text-align: center; /* Center-align the header content */
+            padding: 2em; /* Increase padding for a bigger banner */
+        }
+
+        header ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        header ul li {
+            margin-right: 20px;
+        }
+
+        header ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Financial Stocks Website</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/stocks/sp500">S&P500</a></li>
+                <li><a href="/stocks/ibex35">IBEX35</a></li>
+                <li><a href="/stocks/nasdq">NASDQ</a></li>
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/stocks">Stocks</a></li>
-        </ul>
-    </nav>
     <section class="content">
         <h2>Welcome to our financial stocks website!</h2>
         <p>This is a simple example to get you started.</p>
     </section>
 </body>
 </html>
-
