@@ -20,30 +20,121 @@
         }
 
         header ul li {
-            margin-right: 20px;
+            margin-right: 90px;
         }
 
         header ul li a {
             color: #fff;
             text-decoration: none;
         }
+
+        /* Style for the dropdown button */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Style for the dropdown content */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            z-index: 1;
+        }
+
+        /* Style for dropdown links */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Style for dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown content when hovering over the dropdown button */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Financial Stocks Website</h1>
+        <h1>IA Predictions</h1>
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/stocks/sp500">S&P500</a></li>
-                <li><a href="/stocks/ibex35">IBEX35</a></li>
-                <li><a href="/stocks/nasdq">NASDQ</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">Stocks</a>
+                    <div class="dropdown-content">
+                        <a href="/stocks/sp500">S&P500</a>
+                        <a href="/stocks/ibex35">IBEX35</a>
+                        <a href="/stocks/nasdq">NASDQ</a>
+                    </div>
+                </li>
             </ul>
         </nav>
     </header>
     <section class="content">
-        <h2>Welcome to our financial stocks website!</h2>
-        <p>This is a simple example to get you started.</p>
+        <h2> Why to use AI? </h2>
+        <p> 
+            IA has the potential to significantly impact how opportunities are identified in the stock market by leveraging its capabilities in data analysis, pattern recognition, and predictive modeling. Here's how AI can help in this context: 
+        </p>
+        <ol>
+            <li> 
+                <strong>
+                    Data Analysis and Processing:
+                </strong> 
+                The stock market generates an enormous amount of data from various sources, including historical price movements, financial reports, news, social media, and more. AI can process and analyze this data much faster and more comprehensively than humans, identifying patterns and correlations that might not be immediately apparent.
+            </li>
+            <li>
+                <strong>
+                    Sentiment Analysis:
+                </strong> 
+                AI can analyze news articles, social media posts, and other textual data to gauge market sentiment. Positive or negative sentiment about a particular stock or the market as a whole can influence stock prices. Sentiment analysis can help traders understand market psychology and make decisions based on public sentiment.
+            </li>
+            <li>
+                <strong>
+                    Pattern Recognition: 
+                </strong> 
+                AI can identify complex patterns in historical stock price data that might indicate potential trends or opportunities. This includes technical analysis patterns like moving averages, support and resistance levels, and candlestick patterns. These patterns can help traders make more informed decisions about when to buy or sell stocks.
+            </li>
+            <li>
+                <strong>
+                    Predictive Analytics:
+                </strong> 
+                Machine learning algorithms can be trained to make predictions about stock price movements based on historical data and various influencing factors. While stock prices are influenced by a multitude of factors, including economic indicators and company performance, AI models can help identify potential trends and movements with a certain level of accuracy.
+            </li>
+            <li>
+                <strong>
+                    Portfolio Management: 
+                </strong> 
+                AI can assist in optimizing investment portfolios. By considering risk tolerance, investment goals, and market conditions, AI algorithms can suggest portfolio adjustments to achieve better diversification and potentially higher returns.
+            </li>
+            <li>
+                <strong>
+                    Market Simulation and Backtesting:
+                </strong> 
+                AI can simulate different investment strategies using historical data to see how they would have performed in the past. This process, known as backtesting, helps refine strategies and understand their potential risks and rewards before implementing them in live markets.
+            </li>
+            <li>
+                <strong>
+                    Algorithmic Trading: 
+                </strong> 
+                AI-powered algorithms can execute trades at high speeds based on predefined criteria. These algorithms can take advantage of short-term price discrepancies or execute complex trading strategies that require split-second decision-making.
+            </li>
+            <li>
+                <strong>
+                    Risk Management:
+                    AI can help in managing risks by providing insights into potential downside scenarios. Advanced risk models can factor in various risk factors and suggest strategies to mitigate potential losses.
+                </strong> 
+            </li>
+          </ol>
     </section>
 </body>
 </html>
+

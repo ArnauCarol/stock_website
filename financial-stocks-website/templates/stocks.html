@@ -14,7 +14,6 @@
             color: #fff;
             text-align: center; /* Center-align the header content */
             padding: 2em; /* Increase padding for a bigger banner */
-            
         }
 
         header ul {
@@ -26,26 +25,66 @@
         }
 
         header ul li {
-            margin-right: 20px;
+            margin-right: 90px;
         }
 
         header ul li a {
             color: #fff;
             text-decoration: none;
         }
+
+        /* Style for the dropdown button */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Style for the dropdown content */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            z-index: 1;
+        }
+
+        /* Style for dropdown links */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Style for dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown content when hovering over the dropdown button */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Financial Stocks Website</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/stocks/sp500">S&P500</a></li>
-                <li><a href="/stocks/ibex35">IBEX35</a></li>
-                <li><a href="/stocks/nasdq">NASDQ</a></li>
-            </ul>
-        </nav>
+        <div class="header-content">
+            <h1>Financial Stocks Website</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">Stocks</a>
+                        <div class="dropdown-content">
+                            <a href="/stocks/sp500">S&P500</a>
+                            <a href="/stocks/ibex35">IBEX35</a>
+                            <a href="/stocks/nasdq">NASDQ</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
     <section class="content">
         <h2>Stock Data for {{ stock_symbol }}</h2>
@@ -61,5 +100,3 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
-
-
