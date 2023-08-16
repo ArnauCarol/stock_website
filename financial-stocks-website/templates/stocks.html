@@ -84,25 +84,30 @@
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <h1>STOCK.AI</h1>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li class="dropdown">
-                        <a href="javascript:void(0)" class="dropbtn">Stocks</a>
-                        <div class="dropdown-content">
-                            <a href="/stocks/sp500">S&P500</a>
-                            <a href="/stocks/ibex35">IBEX35</a>
-                            <a href="/stocks/nasdq">NASDQ</a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+        <h1>STOCK.AI</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">Stocks</a>
+                    <div class="dropdown-content">
+                        <a href="/stocks/sp500">S&P500</a>
+                        <a href="/stocks/ibex35">IBEX35</a>
+                        <a href="/stocks/nasdq">NASDQ</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
     </header>
     <section class="content">
-        <h2>Stock Data for {{ stock_symbol }}</h2>
+        <h2>Stock Data for {{ table_name }}</h2>
+        <div class="chart-controls">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate">
+            <button id="filterButton">Filter</button>
+        </div>
         <div class="chart-container">
             <canvas id="stockChart"></canvas>
         </div>
@@ -111,20 +116,32 @@
     <script>
         var stockDates = {{ stock_dates|tojson|safe }};
         var stockPrices = {{ stock_prices|tojson|safe }};
-
-        // Initialize the chart
+        var stockVolumes = {{ stock_volumes|tojson|safe }};
+    
+        // Initialize the chart with initial data
         var ctx = document.getElementById('stockChart').getContext('2d');
         var stockChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: stockDates,
-                datasets: [{
-                    label: 'Stock Price',
-                    data: stockPrices,
-                    borderColor: 'blue',
-                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                    borderWidth: 1
-                }]
+                datasets: [
+                    {
+                        label: 'Stock Price',
+                        data: stockPrices,
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        borderWidth: 1,
+                        yAxisID: 'price-y-axis' // Associate with the price y-axis
+                    },
+                    {
+                        label: 'Volume',
+                        data: stockVolumes,
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        borderWidth: 1,
+                        yAxisID: 'volume-y-axis' // Associate with the volume y-axis
+                    }
+                ]
             },
             options: {
                 responsive: true,
@@ -136,12 +153,50 @@
                             unit: 'month'
                         }
                     },
-                    y: {
-                        beginAtZero: false
+                    priceY: {
+                        beginAtZero: false,
+                        position: 'left', // Position on the left side
+                        title: {
+                            display: true,
+                            text: 'Stock Price'
+                        }
+                    },
+                    volumeY: {
+                        beginAtZero: true,
+                        position: 'right', // Position on the right side
+                        title: {
+                            display: true,
+                            text: 'Volume'
+                        }
                     }
                 }
             }
         });
+    
+        // Handle filter button click
+        document.getElementById('filterButton').addEventListener('click', function () {
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+    
+            // Filter data based on selected date range
+            var filteredDates = [];
+            var filteredPrices = [];
+            var filteredVolumes = [];
+            for (var i = 0; i < stockDates.length; i++) {
+                if (stockDates[i] >= startDate && stockDates[i] <= endDate) {
+                    filteredDates.push(stockDates[i]);
+                    filteredPrices.push(stockPrices[i]);
+                    filteredVolumes.push(stockVolumes[i]);
+                }
+            }
+    
+            // Update the chart with filtered data
+            stockChart.data.labels = filteredDates;
+            stockChart.data.datasets[0].data = filteredPrices;
+            stockChart.data.datasets[1].data = filteredVolumes;
+            stockChart.update();
+        });
     </script>
+    
 </body>
 </html>
