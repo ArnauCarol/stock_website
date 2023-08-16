@@ -1,0 +1,3 @@
+/usr/bin/python3
+
+0 3 * * * /usr/bin/python3 /Users/arnau/Desktop/stock_website/financial-stocks-website/import_no_duplicates.py

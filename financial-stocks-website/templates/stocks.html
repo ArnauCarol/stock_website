@@ -9,13 +9,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
     <style>
+        body {
+            margin: 0; /* Reset default margin */
+            font-family: Arial, sans-serif; /* Set a common font for better readability */
+            background-color: #f0f0f0; /* Add a light background color */
+        }
         header {
             background-color: #222;
             color: #fff;
-            text-align: center; /* Center-align the header content */
-            padding: 2em; /* Increase padding for a bigger banner */
+            text-align: center;
+            padding: 2em;
         }
-
         header ul {
             list-style-type: none;
             margin: 0;
@@ -23,23 +27,17 @@
             display: flex;
             justify-content: flex-end;
         }
-
         header ul li {
-            margin-right: 70px;
+            margin-right: 70px; /* Reduced margin for better spacing */
         }
-
         header ul li a {
             color: #fff;
             text-decoration: none;
         }
-
-        /* Style for the dropdown button */
         .dropdown {
             position: relative;
             display: inline-block;
         }
-
-        /* Style for the dropdown content */
         .dropdown-content {
             display: none;
             position: absolute;
@@ -47,23 +45,40 @@
             min-width: 160px;
             z-index: 1;
         }
-
-        /* Style for dropdown links */
         .dropdown-content a {
             color: black;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
         }
-
-        /* Style for dropdown links on hover */
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
-
-        /* Show the dropdown content when hovering over the dropdown button */
         .dropdown:hover .dropdown-content {
             display: block;
+        }
+        .content {
+            max-width: 800px;
+            margin: 0 auto; /* Center-align content and add margin */
+            padding: 20px; /* Add padding for better spacing */
+            background-color: #fff; /* White background for content */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+        }
+        h2 {
+            margin-top: 0; /* Reset margin for headings */
+            color: #333; /* Darker color for headings */
+        }
+        p {
+            margin-bottom: 16px; /* Add margin at the bottom of paragraphs */
+            line-height: 1.6; /* Increase line height for better readability */
+            color: #555; /* Slightly darker color for text */
+        }
+        ol {
+            margin-left: 20px; /* Indent the ordered list */
+        }
+        strong {
+            font-weight: bold; /* Use font-weight property for boldness */
+            color: #333; /* Darker color for bold text */
         }
     </style>
 </head>
@@ -96,7 +111,37 @@
     <script>
         var stockDates = {{ stock_dates|tojson|safe }};
         var stockPrices = {{ stock_prices|tojson|safe }};
+
+        // Initialize the chart
+        var ctx = document.getElementById('stockChart').getContext('2d');
+        var stockChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: stockDates,
+                datasets: [{
+                    label: 'Stock Price',
+                    data: stockPrices,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
     </script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

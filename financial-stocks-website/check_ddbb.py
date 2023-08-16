@@ -5,7 +5,7 @@ conn = sqlite3.connect('stock_data.db')
 cursor = conn.cursor()
 
 # Execute a SELECT query to retrieve data from the table
-query = "SELECT * FROM SP500"
+query = "SELECT * FROM IBEX35"
 cursor.execute(query)
 
 # Fetch and print all rows

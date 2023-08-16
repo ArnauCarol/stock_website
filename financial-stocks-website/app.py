@@ -1,4 +1,4 @@
-import yfinance as yf
+import sqlite3
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -10,19 +10,27 @@ def home():
 @app.route('/stocks/<symbol>')
 def stocks(symbol):
     if symbol == 'sp500':
+        table_name = 'SP500'
         stock_symbol = '^GSPC'
     elif symbol == 'ibex35':
+        table_name = 'IBEX35'
         stock_symbol = '^IBEX'
     elif symbol == 'nasdq':
-        stock_symbol = '^IXIC'
+        table_name = 'NASDQ'
+        stock_symbol = 'NQ=F'
     else:
         return "Invalid stock symbol."
 
-    stock_data = yf.download(stock_symbol, period='10y')
-    stock_dates = stock_data.index.strftime('%Y-%m-%d').tolist()
-    stock_prices = stock_data['Close'].tolist()
+    conn = sqlite3.connect('stock_data.db')
+    cursor = conn.cursor()
+    cursor.execute(f'SELECT date, close FROM {table_name}')
+    data = cursor.fetchall()
+    conn.close()
 
-    return render_template('stocks.html', stock_symbol=stock_symbol, stock_dates=stock_dates, stock_prices=stock_prices)
+    stock_dates = [row[0] for row in data]
+    stock_prices = [row[1] for row in data]
+
+    return render_template('stocks.html', stock_symbol=stock_symbol, stock_dates=stock_dates, stock_prices=stock_prices, table_name=table_name)
 
 if __name__ == '__main__':
     app.run(debug=True)
