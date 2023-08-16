@@ -80,6 +80,9 @@
             font-weight: bold; /* Use font-weight property for boldness */
             color: #333; /* Darker color for bold text */
         }
+        .volume-chart-container {
+            height: 75%; /* Set the height to 75% of the original chart height */
+        }
     </style>
 </head>
 <body>
@@ -109,7 +112,10 @@
             <button id="filterButton">Filter</button>
         </div>
         <div class="chart-container">
-            <canvas id="stockChart"></canvas>
+            <canvas id="priceChart"></canvas>
+        </div>
+        <div class="volume-chart-container">
+            <canvas id="volumeChart"></canvas>
         </div>
     </section>
     
@@ -118,9 +124,9 @@
         var stockPrices = {{ stock_prices|tojson|safe }};
         var stockVolumes = {{ stock_volumes|tojson|safe }};
     
-        // Initialize the chart with initial data
-        var ctx = document.getElementById('stockChart').getContext('2d');
-        var stockChart = new Chart(ctx, {
+        // Initialize the price chart with initial data
+        var priceChartCtx = document.getElementById('priceChart').getContext('2d');
+        var priceChart = new Chart(priceChartCtx, {
             type: 'line',
             data: {
                 labels: stockDates,
@@ -131,15 +137,6 @@
                         borderColor: 'blue',
                         backgroundColor: 'rgba(0, 0, 255, 0.1)',
                         borderWidth: 1,
-                        yAxisID: 'price-y-axis' // Associate with the price y-axis
-                    },
-                    {
-                        label: 'Volume',
-                        data: stockVolumes,
-                        borderColor: 'green',
-                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                        borderWidth: 1,
-                        yAxisID: 'volume-y-axis' // Associate with the volume y-axis
                     }
                 ]
             },
@@ -153,17 +150,47 @@
                             unit: 'month'
                         }
                     },
-                    priceY: {
+                    y: {
                         beginAtZero: false,
-                        position: 'left', // Position on the left side
+                        position: 'left',
                         title: {
                             display: true,
                             text: 'Stock Price'
                         }
+                    }
+                }
+            }
+        });
+
+        // Initialize the volume chart with initial data
+        var volumeChartCtx = document.getElementById('volumeChart').getContext('2d');
+        var volumeChart = new Chart(volumeChartCtx, {
+            type: 'line',
+            data: {
+                labels: stockDates,
+                datasets: [
+                    {
+                        label: 'Volume',
+                        data: stockVolumes,
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        borderWidth: 1,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
                     },
-                    volumeY: {
+                    y: {
                         beginAtZero: true,
-                        position: 'right', // Position on the right side
+                        position: 'left',
                         title: {
                             display: true,
                             text: 'Volume'
@@ -172,12 +199,12 @@
                 }
             }
         });
-    
+
         // Handle filter button click
         document.getElementById('filterButton').addEventListener('click', function () {
             var startDate = document.getElementById('startDate').value;
             var endDate = document.getElementById('endDate').value;
-    
+
             // Filter data based on selected date range
             var filteredDates = [];
             var filteredPrices = [];
@@ -189,14 +216,17 @@
                     filteredVolumes.push(stockVolumes[i]);
                 }
             }
-    
-            // Update the chart with filtered data
-            stockChart.data.labels = filteredDates;
-            stockChart.data.datasets[0].data = filteredPrices;
-            stockChart.data.datasets[1].data = filteredVolumes;
-            stockChart.update();
+
+            // Update the price chart with filtered price data
+            priceChart.data.labels = filteredDates;
+            priceChart.data.datasets[0].data = filteredPrices;
+            priceChart.update();
+
+            // Update the volume chart with filtered volume data
+            volumeChart.data.labels = filteredDates;
+            volumeChart.data.datasets[0].data = filteredVolumes;
+            volumeChart.update();
         });
     </script>
-    
 </body>
 </html>
