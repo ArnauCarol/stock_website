@@ -5,7 +5,7 @@ conn = sqlite3.connect('stock_data.db')
 cursor = conn.cursor()
 
 # Delete all data from the SP500 table
-delete_query = "DELETE FROM SP500"
+delete_query = "DELETE FROM NASDQ"
 cursor.execute(delete_query)
 
 # Commit the changes and close the connection

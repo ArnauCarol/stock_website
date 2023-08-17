@@ -99,6 +99,7 @@
                         <a href="/stocks/nasdq">NASDQ</a>
                     </div>
                 </li>
+                <li><a href="/">Currency</a></li>
             </ul>
         </nav>
     </header>
@@ -106,9 +107,9 @@
         <h2>Stock Data for {{ table_name }}</h2>
         <div class="chart-controls">
             <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" name="startDate">
+            <input type="date" id="startDate" name="startDate" value="2023-01-01">
             <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" name="endDate">
+            <input type="date" id="endDate" name="endDate" >
             <button id="filterButton">Filter</button>
         </div>
         <div class="chart-container">
@@ -145,6 +146,7 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
+                        display: false, // Hide x-axis
                         type: 'time',
                         time: {
                             unit: 'month'
@@ -157,6 +159,11 @@
                             display: true,
                             text: 'Stock Price'
                         }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
                     }
                 }
             }
@@ -195,6 +202,11 @@
                             display: true,
                             text: 'Volume'
                         }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
                     }
                 }
             }

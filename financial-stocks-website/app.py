@@ -31,7 +31,9 @@ def stocks(symbol):
     stock_prices = [row[1] for row in data]
     stock_volumes = [row[2] for row in data]
 
-    return render_template('stocks.html', stock_symbol=stock_symbol, stock_dates=stock_dates, stock_prices=stock_prices, stock_volumes=stock_volumes, table_name=table_name)
+    return render_template('stocks.html', stock_symbol=stock_symbol,
+                           stock_dates=stock_dates, stock_prices=stock_prices,
+                           stock_volumes=stock_volumes, table_name=table_name)
 
 if __name__ == '__main__':
     app.run(debug=True)

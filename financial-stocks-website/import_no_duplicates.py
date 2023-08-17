@@ -1,6 +1,7 @@
 import yfinance as yf
 import sqlite3
 from datetime import datetime
+import numpy as np
 
 # Connect to the database
 conn = sqlite3.connect('stock_data.db')
@@ -21,10 +22,16 @@ for table_name, ticker in table_TIKER.items():
         ''', (ticker, index.date())).fetchone()
 
         if not existing_data:
+            # Normalize volume data
+            volume = row['Volume']
+            min_volume = new_data['Volume'].min()
+            max_volume = new_data['Volume'].max()
+            normalized_volume = (volume - min_volume) / (max_volume - min_volume)
+
             cursor.execute(f'''
                 INSERT INTO {table_name} (ticker, date, open, close, high, low, volume)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (ticker, index.date(), int(row['Open']), int(row['Close']), int(row['High']), int(row['Low']), int(row['Volume'])))
+            ''', (ticker, index.date(), int(row['Open']), int(row['Close']), int(row['High']), int(row['Low']), normalized_volume))
             print(f"Inserted data for {index.date()} in {table_name}")
 
 # Commit changes and close the connection
@@ -32,3 +39,4 @@ conn.commit()
 conn.close()
 
 print("Data insertion completed.")
+
