@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Stocks Website - Stocks</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Include the moment.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- Include the Chart.js library with the moment adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
+    <style>
+        body {
+            margin: 0; /* Reset default margin */
+            font-family: Arial, sans-serif; /* Set a common font for better readability */
+            background-color: #f0f0f0; /* Add a light background color */
+        }
+        header {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 2em;
+        }
+        header ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+        header ul li {
+            margin-right: 70px; /* Reduced margin for better spacing */
+        }
+        header ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .content {
+            max-width: 800px;
+            margin: 0 auto; /* Center-align content and add margin */
+            padding: 20px; /* Add padding for better spacing */
+            background-color: #fff; /* White background for content */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+        }
+        h2 {
+            margin-top: 0; /* Reset margin for headings */
+            color: #333; /* Darker color for headings */
+        }
+        p {
+            margin-bottom: 16px; /* Add margin at the bottom of paragraphs */
+            line-height: 1.6; /* Increase line height for better readability */
+            color: #555; /* Slightly darker color for text */
+        }
+        ol {
+            margin-left: 20px; /* Indent the ordered list */
+        }
+        strong {
+            font-weight: bold; /* Use font-weight property for boldness */
+            color: #333; /* Darker color for bold text */
+        }
+        .volume-chart-container {
+            height: 75%; /* Set the height to 75% of the original chart height */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>STOCK.AI</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">Stocks</a>
+                    <div class="dropdown-content">
+                        <a href="/sp500/sp500">S&P500</a>
+                        <a href="/ibex35/ibex35">IBEX35</a>
+                        <a href="/nasdq/nasdq">NASDQ</a>
+                    </div>
+                </li>
+                <li><a href="/">Currency</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="content">
+        <h2>Stock Data for {{ table_name }}</h2>
+        <div class="chart-controls">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" value="2023-01-01">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" >
+            <button id="filterButton">Filter</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+        <div class="volume-chart-container">
+            <canvas id="volumeChart"></canvas>
+        </div>
+    </section>
+    
+    <script>
+        var stockDates = {{ stock_dates|tojson|safe }};
+        var stockPrices = {{ stock_prices|tojson|safe }};
+        var stockVolumes = {{ stock_volumes|tojson|safe }};
+    
+        // Initialize the price chart with initial data
+        var priceChartCtx = document.getElementById('priceChart').getContext('2d');
+        var priceChart = new Chart(priceChartCtx, {
+            type: 'line',
+            data: {
+                labels: stockDates,
+                datasets: [
+                    {
+                        label: 'Stock Price',
+                        data: stockPrices,
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        borderWidth: 1,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        display: false, // Hide x-axis
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Stock Price'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
+                    }
+                }
+            }
+        });
+
+        // Initialize the volume chart with initial data
+        var volumeChartCtx = document.getElementById('volumeChart').getContext('2d');
+        var volumeChart = new Chart(volumeChartCtx, {
+            type: 'line',
+            data: {
+                labels: stockDates,
+                datasets: [
+                    {
+                        label: 'Volume',
+                        data: stockVolumes,
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        borderWidth: 1,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Volume'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
+                    }
+                }
+            }
+        });
+
+        // Handle filter button click
+        document.getElementById('filterButton').addEventListener('click', function () {
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+
+            // Filter data based on selected date range
+            var filteredDates = [];
+            var filteredPrices = [];
+            var filteredVolumes = [];
+            for (var i = 0; i < stockDates.length; i++) {
+                if (stockDates[i] >= startDate && stockDates[i] <= endDate) {
+                    filteredDates.push(stockDates[i]);
+                    filteredPrices.push(stockPrices[i]);
+                    filteredVolumes.push(stockVolumes[i]);
+                }
+            }
+
+            // Update the price chart with filtered price data
+            priceChart.data.labels = filteredDates;
+            priceChart.data.datasets[0].data = filteredPrices;
+            priceChart.update();
+
+            // Update the volume chart with filtered volume data
+            volumeChart.data.labels = filteredDates;
+            volumeChart.data.datasets[0].data = filteredVolumes;
+            volumeChart.update();
+        });
+    </script>
+</body>
+</html>
