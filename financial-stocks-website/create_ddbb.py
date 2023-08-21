@@ -6,7 +6,7 @@ cursor = conn.cursor()
 
 # Define the table schema
 table_schema = '''
-    CREATE TABLE IF NOT EXISTS NASDQ (
+    CREATE TABLE IF NOT EXISTS MSFT (
         id INTEGER PRIMARY KEY,
         ticker TEXT,
         date DATE,

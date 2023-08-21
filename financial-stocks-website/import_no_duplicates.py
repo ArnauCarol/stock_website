@@ -8,7 +8,7 @@ conn = sqlite3.connect('stock_data.db')
 cursor = conn.cursor()
 
 # Define the dictionary of table names and tickers
-table_TIKER = {'NASDQ': 'NQ=F', 'SP500': '^GSPC', 'IBEX35': '^IBEX'}
+table_TIKER = {'NASDQ': 'NQ=F', 'SP500': '^GSPC', 'IBEX35': '^IBEX', 'stocks':'MSFT'}
 
 # Iterate through each table-ticker pair
 for table_name, ticker in table_TIKER.items():

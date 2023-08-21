@@ -54,9 +54,6 @@ def sp500(symbol):
     
 
 
-# Your existing code...
-# Import necessary modules
-
 @app.route('/nasdaq/<symbol>')
 def nasdaq(symbol):
     if symbol == 'nasdaq':
@@ -67,7 +64,7 @@ def nasdaq(symbol):
 
     conn = sqlite3.connect('stock_data.db')
     cursor = conn.cursor()
-    cursor.execute(f'SELECT date, close, volume FROM {table_name}')
+    cursor.execute(f'SELECT date, close, volume FROM { table_name }')
     data = cursor.fetchall()
     conn.close()
 
@@ -78,6 +75,32 @@ def nasdaq(symbol):
     return render_template('nasdaq.html', stock_symbol=stock_symbol,
                            stock_dates=stock_dates, stock_prices=stock_prices,
                            stock_volumes=stock_volumes, table_name=table_name)
+
+
+@app.route('/stocks/<stocks>')
+def stocks(stocks):
+    if stocks == 'msft':
+        table_name = 'MSFT'
+        stock_symbol = 'MSFT'
+    else:
+        return "Invalid stock symbol."
+
+    conn = sqlite3.connect('stock_data.db')
+    cursor = conn.cursor()
+    cursor.execute(f'SELECT date, close, volume FROM { table_name }')
+    data = cursor.fetchall()
+    conn.close()
+
+    stock_dates = [row[0] for row in data]
+    stock_prices = [row[1] for row in data]
+    stock_volumes = [row[2] for row in data]
+
+    return render_template('stocks.html', stock_symbol=stock_symbol,
+                           stock_dates=stock_dates, stock_prices=stock_prices,
+                           stock_volumes=stock_volumes, table_name=table_name)
+                           
+
+
 
 
 if __name__ == '__main__':

@@ -94,9 +94,9 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)">Stocks</a>
                     <div class="dropdown-content">
-                        <a href="/stocks/sp500">S&P500</a>
-                        <a href="/stocks/ibex35">IBEX35</a>
-                        <a href="/stocks/nasdq">NASDQ</a>
+                        <a href="/sp500/sp500">S&P500</a>
+                        <a href="/ibex35/ibex35">IBEX35</a>
+                        <a href="/nasdq/nasdq">NASDQ</a>
                     </div>
                 </li>
                 <li><a href="/">Currency</a></li>
@@ -119,6 +119,17 @@
             <canvas id="volumeChart"></canvas>
         </div>
     </section>
+    <section class="content">
+        <!-- Existing content... -->
+    
+        <h2>Top 20 Companies in S&P 500</h2>
+        <ul>
+            <li><a href="/company/apple">Apple Inc.</a></li>
+            <li><a href="/stocks/msft">MSFT</a></li>
+            <!-- Add the remaining company names and links here... -->
+        </ul>
+    </section>
+    
     
     <script>
         var stockDates = {{ stock_dates|tojson|safe }};
