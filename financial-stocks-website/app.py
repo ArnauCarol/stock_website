@@ -77,17 +77,57 @@ def nasdaq(symbol):
                            stock_volumes=stock_volumes, table_name=table_name)
 
 
+
 @app.route('/stocks/<stocks>')
 def stocks(stocks):
-    if stocks == 'msft':
-        table_name = 'MSFT'
-        stock_symbol = 'MSFT'
+    table_name = 'stocks'  # Table name is always 'stocks'
+
+    if stocks == 'aapl':
+        stock_symbol = 'aapl'
+    elif stocks == 'msft':
+        stock_symbol = 'msft'
+    elif stocks == 'amzn':
+        stock_symbol = 'amzn'
+    elif stocks == 'googl':
+        stock_symbol = 'googl'
+    elif stocks == 'meta':
+        stock_symbol = 'meta'
+    elif stocks == 'fb':
+        stock_symbol = 'fb'
+    elif stocks == 'jpm':
+        stock_symbol = 'jpm'
+    elif stocks == 'tsla':
+        stock_symbol = 'tsla'
+    elif stocks == 'brk':
+        stock_symbol = 'brk'
+    elif stocks == 'nvda':
+        stock_symbol = 'nvda'
+    elif stocks == 'hd':
+        stock_symbol = 'hd'
+    elif stocks == 'pypl':
+        stock_symbol = 'pypl'
+    elif stocks == 'v':
+        stock_symbol = 'v'
+    elif stocks == 'pg':
+        stock_symbol = 'pg'
+    elif stocks == 'ma':
+        stock_symbol = 'ma'
+    elif stocks == 'crm':
+        stock_symbol = 'crm'
+    elif stocks == 'abt':
+        stock_symbol = 'abt'
+    elif stocks == 'wmt':
+        stock_symbol = 'wmt'
+    elif stocks == 'dis':
+        stock_symbol = 'dis'
+    elif stocks == 'unh':
+        stock_symbol = 'unh'
     else:
         return "Invalid stock symbol."
 
     conn = sqlite3.connect('stock_data.db')
     cursor = conn.cursor()
-    cursor.execute(f'SELECT date, close, volume FROM { table_name }')
+    cursor.execute('SELECT date, close, volume FROM {} WHERE ticker = ?'.format(table_name), (stock_symbol,))
     data = cursor.fetchall()
     conn.close()
 
