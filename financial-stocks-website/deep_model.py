@@ -401,9 +401,9 @@ predicted_high_price = scaler.inverse_transform([[data_scaled[-1, 0], data_scale
 
 print("Predicted High Price after 5 Days:", predicted_high_price)
 
-"""
 
-"""import sqlite3
+
+import sqlite3
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -505,8 +505,8 @@ plt.figure(figsize=(12, 4))
 plt.plot(result.resid)
 plt.title('Residual Component')
 plt.tight_layout()
-plt.show()
-"""
+
+
 import sqlite3
 import numpy as np
 import pandas as pd
@@ -599,12 +599,225 @@ plt.figure(figsize=(12, 8))
 num_features = data_scaled.shape[1] - 1  # Exclude the date feature
 for i in range(num_features):
     plt.subplot(num_features + 1, 1, i + 1)
-    plt.plot(data_scaled[:, i + 1], label='Original')
-    plt.plot(decomposed_features[:, i], label='Residual')  # Plot the deseasonalized data (residual component)
+    plt.plot(data_scaled[:, i + 1], label='Residual')
+    plt.plot(decomposed_features[:, i], label='Original')  # Plot the deseasonalized data (residual component)
     plt.title(f'Feature {i + 1}')
     plt.legend()
 plt.tight_layout()
 plt.show()
 
 
+
+
+
+import sqlite3
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Connect to the database
+conn = sqlite3.connect('stock_data.db')
+cursor = conn.cursor()
+
+# Fetch data from the database
+query = "SELECT date, open, close, high, low, volume FROM SP500 ORDER BY date"
+data = cursor.execute(query).fetchall()
+data = np.array(data)
+
+# Get the original close, high, and low prices for the last data point
+last_close_price = data[-1, 2]
+last_high_price = data[-1, 3]
+last_low_price = data[-1, 4]
+
+# Extract the date column and the numerical features
+dates = data[:, 0]
+numeric_data = data[:, 1:].astype(float)
+
+# Normalize the data
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(numeric_data)
+
+# Perform time series decomposition for each feature
+decomposed_features = []
+
+for i in range(data_scaled.shape[1]):
+    series = pd.Series(data_scaled[:, i], index=pd.to_datetime(dates))
+    result = seasonal_decompose(series, model='additive', period=30)
+    deseasonalized_data = data_scaled[:, i] - result.seasonal
+    decomposed_features.append(deseasonalized_data)
+
+decomposed_features = np.array(decomposed_features).T
+
+# Prepare data for LSTM
+sequence_length = 4  # Number of previous days to consider
+target_offset = 5    # Predicting the high price of the day n+5
+X, y = [], []
+
+for i in range(len(decomposed_features) - sequence_length - target_offset + 1):
+    X.append(decomposed_features[i:i+sequence_length])
+    y.append(decomposed_features[i+sequence_length+target_offset-1])
+
+X = np.array(X)
+y = np.array(y)
+
+# Split data into training and testing sets
+split_ratio = 0.8
+split_index = int(len(X) * split_ratio)
+X_train, X_test = X[:split_index], X[split_index:]
+y_train, y_test = y[:split_index], y[split_index:]
+
+# Build the LSTM model
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(50, input_shape=(X_train.shape[1], X_train.shape[2])),
+    tf.keras.layers.Dense(X_train.shape[2])
+])
+model.compile(optimizer='adam', loss='mse')
+
+# Train the model
+model.fit(X_train, y_train, epochs=5, batch_size=64)
+
+# Evaluate the model
+mse = model.evaluate(X_test, y_test)
+print(f'Mean Squared Error: {mse}')
+
+# Get the most recent sequence of data
+latest_sequence = decomposed_features[-sequence_length:]
+
+# Reshape the sequence for prediction
+latest_sequence = np.reshape(latest_sequence, (1, sequence_length, latest_sequence.shape[1]))
+
+# Make predictions using the LSTM model
+predicted_deseasonalized_features = model.predict(latest_sequence)[0]
+
+# Reseasonalize the predicted features
+predicted_features = predicted_deseasonalized_features + result.seasonal[-1]
+
+# Denormalize the predicted features
+denormalized_predicted_features = scaler.inverse_transform(predicted_features.reshape(1, -1))
+
+# Extract the predicted close, high, and low prices for each day
+predicted_close_prices = denormalized_predicted_features[:, 2]  # Index 2 corresponds to the close price feature
+predicted_high_prices = denormalized_predicted_features[:, 3]   # Index 3 corresponds to the high price feature
+predicted_low_prices = denormalized_predicted_features[:, 4]    # Index 4 corresponds to the low price feature
+
+# Plot original time series and residual components
+plt.figure(figsize=(12, 8))
+num_features = data_scaled.shape[1] - 1  # Exclude the date feature
+for i in range(num_features):
+    plt.subplot(num_features + 1, 1, i + 1)
+    plt.plot(data_scaled[:, i + 1], label='Original')
+    plt.plot(decomposed_features[:, i], label='Residual')  # Plot the deseasonalized data (residual component)
+    plt.title(f'Feature {i + 1}')
+    plt.legend()
+
+# Plot the predicted close, high, and low prices
+plt.subplot(num_features + 1, 1, num_features + 1)
+plt.plot(np.arange(len(data_scaled), len(data_scaled) + sequence_length), [last_close_price] * sequence_length, label='Original Close')
+
+# Plot the predicted prices for each day
+for i in range(len(predicted_close_prices)):
+    plt.plot(len(data_scaled) + sequence_length + i, predicted_close_prices[i], marker='o', markersize=8, color='red', label='Predicted Close' if i == 0 else '')
+    plt.plot(len(data_scaled) + sequence_length + i, predicted_high_prices[i], marker='o', markersize=8, color='green', label='Predicted High' if i == 0 else '')
+    plt.plot(len(data_scaled) + sequence_length + i, predicted_low_prices[i], marker='o', markersize=8, color='blue', label='Predicted Low' if i == 0 else '')
+
+plt.title("Predicted Prices")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+"""
+import sqlite3
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Connect to the database
+conn = sqlite3.connect('stock_data.db')
+cursor = conn.cursor()
+
+# Fetch data from the database
+query = "SELECT date, close, high, low, volume FROM SP500 ORDER BY date"
+data = cursor.execute(query).fetchall()
+data = np.array(data)
+
+# Extract the date column and the numerical features
+dates = data[:, 0]
+numeric_data = data[:, 1:].astype(float)
+
+# Normalize the data
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(numeric_data)
+
+# Perform time series decomposition for each feature
+decomposed_features = []
+
+for i in range(data_scaled.shape[1]):
+    series = pd.Series(data_scaled[:, i], index=pd.to_datetime(dates))
+    result = seasonal_decompose(series, model='additive', period=30)
+    deseasonalized_data = data_scaled[:, i] - result.seasonal
+    decomposed_features.append(deseasonalized_data)
+
+decomposed_features = np.array(decomposed_features).T
+
+# Prepare data for LSTM
+sequence_length = 4  # Number of previous days to consider
+target_offset = 5    # Predicting the high price of the day n+5
+X, y = [], []
+
+for i in range(len(decomposed_features) - sequence_length - target_offset + 1):
+    X.append(decomposed_features[i:i+sequence_length])
+    y.append(decomposed_features[i+sequence_length+target_offset-1])
+
+X = np.array(X)
+y = np.array(y)
+
+# Build the LSTM model
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(50, input_shape=(X.shape[1], X.shape[2])),
+    tf.keras.layers.Dense(X.shape[2])
+])
+model.compile(optimizer='adam', loss='mse')
+
+# Train the model
+model.fit(X, y, epochs=5, batch_size=64)
+
+# Create a list to store predictions for each day
+predictions = []
+
+# Iterate over each day and make predictions
+for i in range(len(decomposed_features) - sequence_length):
+    latest_sequence = decomposed_features[i:i+sequence_length]
+    latest_sequence = np.reshape(latest_sequence, (1, sequence_length, latest_sequence.shape[1]))
+    
+    # Make predictions using the LSTM model
+    predicted_deseasonalized_features = model.predict(latest_sequence)[0]
+    predicted_features = predicted_deseasonalized_features + result.seasonal[-1]
+    denormalized_predicted_features = scaler.inverse_transform(predicted_features.reshape(1, -1))
+    
+    # Extract the predicted close, high, and low prices
+    predicted_close = denormalized_predicted_features[0, 0]  # Index 0 corresponds to the close price feature
+    predicted_high = denormalized_predicted_features[0, 1]   # Index 1 corresponds to the high price feature
+    predicted_low = denormalized_predicted_features[0, 2]    # Index 2 corresponds to the low price feature
+    
+    # Append the predictions to the list
+    predictions.append({
+        'Date': pd.to_datetime(dates[i + sequence_length]),
+        'Predicted_Close': predicted_close,
+        'Predicted_High': predicted_high,
+        'Predicted_Low': predicted_low
+    })
+
+# Create a DataFrame from the list of predictions
+predictions_df = pd.DataFrame(predictions)
+
+# Print the predictions DataFrame
+print(predictions_df)
+
+# ... Rest of your code for plotting ...
 
