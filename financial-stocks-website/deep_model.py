@@ -403,7 +403,7 @@ print("Predicted High Price after 5 Days:", predicted_high_price)
 
 """
 
-import sqlite3
+"""import sqlite3
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -506,3 +506,105 @@ plt.plot(result.resid)
 plt.title('Residual Component')
 plt.tight_layout()
 plt.show()
+"""
+import sqlite3
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Connect to the database
+conn = sqlite3.connect('stock_data.db')
+cursor = conn.cursor()
+
+# Fetch data from the database
+query = "SELECT date, open, close, high, low, volume FROM SP500 ORDER BY date"
+data = cursor.execute(query).fetchall()
+data = np.array(data)
+
+# Extract the date column and the numerical features
+dates = data[:, 0]
+numeric_data = data[:, 1:].astype(float)
+
+# Normalize the data
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(numeric_data)
+
+# Perform time series decomposition for each feature
+decomposed_features = []
+
+for i in range(data_scaled.shape[1]):
+    series = pd.Series(data_scaled[:, i], index=pd.to_datetime(dates))
+    result = seasonal_decompose(series, model='additive', period=30)
+    deseasonalized_data = data_scaled[:, i] - result.seasonal
+    decomposed_features.append(deseasonalized_data)
+
+decomposed_features = np.array(decomposed_features).T
+
+# Prepare data for LSTM
+sequence_length = 4  # Number of previous days to consider
+target_offset = 5    # Predicting the high price of the day n+5
+X, y = [], []
+
+for i in range(len(decomposed_features) - sequence_length - target_offset + 1):
+    X.append(decomposed_features[i:i+sequence_length])
+    y.append(decomposed_features[i+sequence_length+target_offset-1])
+
+X = np.array(X)
+y = np.array(y)
+
+# Split data into training and testing sets
+split_ratio = 0.8
+split_index = int(len(X) * split_ratio)
+X_train, X_test = X[:split_index], X[split_index:]
+y_train, y_test = y[:split_index], y[split_index:]
+
+# Build the LSTM model
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(50, input_shape=(X_train.shape[1], X_train.shape[2])),
+    tf.keras.layers.Dense(X_train.shape[2])
+])
+model.compile(optimizer='adam', loss='mse')
+
+# Train the model
+model.fit(X_train, y_train, epochs=5, batch_size=64)
+
+# Evaluate the model
+mse = model.evaluate(X_test, y_test)
+print(f'Mean Squared Error: {mse}')
+
+# Get the most recent sequence of data
+latest_sequence = decomposed_features[-sequence_length:]
+
+# Reshape the sequence for prediction
+latest_sequence = np.reshape(latest_sequence, (1, sequence_length, latest_sequence.shape[1]))
+
+# Make predictions using the LSTM model
+predicted_deseasonalized_features = model.predict(latest_sequence)[0]
+
+# Reseasonalize the predicted features
+predicted_features = predicted_deseasonalized_features + result.seasonal[-1]
+
+# Denormalize the predicted features
+denormalized_predicted_features = scaler.inverse_transform(predicted_features.reshape(1, -1))
+
+# Print the denormalized predicted features
+print("Predicted Features after 5 Days:", denormalized_predicted_features)
+
+
+# Plot original time series and residual components
+plt.figure(figsize=(12, 8))
+num_features = data_scaled.shape[1] - 1  # Exclude the date feature
+for i in range(num_features):
+    plt.subplot(num_features + 1, 1, i + 1)
+    plt.plot(data_scaled[:, i + 1], label='Original')
+    plt.plot(decomposed_features[:, i], label='Residual')  # Plot the deseasonalized data (residual component)
+    plt.title(f'Feature {i + 1}')
+    plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+
