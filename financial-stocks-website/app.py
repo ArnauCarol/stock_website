@@ -140,6 +140,9 @@ def stocks(stocks):
                            stock_volumes=stock_volumes, table_name=table_name)
                            
 
+@app.route('/rel_stocks')
+def rel_stock():
+    return render_template('rel_stocks.html')
 
 
 
