@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Stocks Website</title>
+    <link rel="stylesheet" type="text/css" href="{ url_for('static', filename='styles.css') }">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        header {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 2em;
+        }
+        header ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+        header ul li {
+            margin-right: 70px;
+        }
+        header ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        p {
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+        ol {
+            margin-left: 20px;
+        }
+        strong {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>STOCK.AI</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">Stocks</a>
+                    <div class="dropdown-content">
+                        <a href="/sp500/sp500">S&P500</a>
+                        <a href="/ibex35/ibex35">IBEX35</a>
+                        <a href="/nasdq/nasdq">NASDQ</a>
+                    </div>
+                </li>
+                <li><a href="/">Currency</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="content">
+        <h2>Why Use AI?</h2>
+        <p>
+            Certainly! Here's a list of various financial instruments and markets that are related and often exhibit some form of interaction or correlation with each other:
+            
+            <!-- Embed the correlation table HTML here -->
+            <table border="1" class="dataframe table table-bordered table-hover">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Company 1</th>
+      <th>Company 2</th>
+      <th>Correlation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>S&amp;P 500</td>
+      <td>VIX</td>
+      <td>-0.616988</td>
+    </tr>
+    <tr>
+      <td>Dow Jones</td>
+      <td>VIX</td>
+      <td>-0.687783</td>
+    </tr>
+    <tr>
+      <td>Nasdaq</td>
+      <td>VIX</td>
+      <td>-0.609730</td>
+    </tr>
+    <tr>
+      <td>EUR/USD</td>
+      <td>USD/JPY</td>
+      <td>-0.865631</td>
+    </tr>
+    <tr>
+      <td>AUD/USD</td>
+      <td>USD/JPY</td>
+      <td>-0.422905</td>
+    </tr>
+    <tr>
+      <td>Brent Crude</td>
+      <td>Gold</td>
+      <td>0.144647</td>
+    </tr>
+    <tr>
+      <td>Brent Crude</td>
+      <td>Silver</td>
+      <td>0.161497</td>
+    </tr>
+    <tr>
+      <td>Gold</td>
+      <td>Silver</td>
+      <td>0.744026</td>
+    </tr>
+    <tr>
+      <td>Platinum</td>
+      <td>Palladium</td>
+      <td>0.610450</td>
+    </tr>
+    <tr>
+      <td>10-Year Treasury Yield</td>
+      <td>VIX</td>
+      <td>-0.115098</td>
+    </tr>
+    <tr>
+      <td>Facebook</td>
+      <td>Apple</td>
+      <td>0.166044</td>
+    </tr>
+    <tr>
+      <td>Apple</td>
+      <td>Amazon</td>
+      <td>0.403877</td>
+    </tr>
+    <tr>
+      <td>Amazon</td>
+      <td>Netflix</td>
+      <td>0.770586</td>
+    </tr>
+    <tr>
+      <td>Google</td>
+      <td>Apple</td>
+      <td>0.857435</td>
+    </tr>
+    <tr>
+      <td>Japanese Yen</td>
+      <td>VIX</td>
+      <td>0.011711</td>
+    </tr>
+    <tr>
+      <td>VNQ</td>
+      <td>10-Year Treasury Yield</td>
+      <td>0.320702</td>
+    </tr>
+  </tbody>
+</table>
+        </p>
+        <!-- ... Rest of your content ... -->
+    </section>
+</body>
+</html>

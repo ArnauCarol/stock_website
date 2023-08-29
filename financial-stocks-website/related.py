@@ -65,7 +65,11 @@ correlation_df = pd.DataFrame(correlation_data, columns=['Company 1', 'Company 2
 # Display the correlation DataFrame
 print(correlation_df)
 
-correlation_table_html = correlation_df.to_html(index=False)
+correlation_table_html = correlation_df.to_html(
+    index=False,
+    classes='table table-bordered table-hover'
+)
+
 # Your HTML template
 html_template = """
 <!DOCTYPE html>
@@ -74,82 +78,96 @@ html_template = """
     <title>Financial Stocks Website</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <style>
-        body {
-            margin: 0; /* Reset default margin */
-            font-family: Arial, sans-serif; /* Set a common font for better readability */
-            background-color: #f0f0f0; /* Add a light background color */
-        }
-        header {
+        body {{
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }}
+        header {{
             background-color: #222;
             color: #fff;
             text-align: center;
             padding: 2em;
-        }
-        header ul {
+        }}
+        header ul {{
             list-style-type: none;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: flex-end;
-        }
-        header ul li {
-            margin-right: 70px; /* Reduced margin for better spacing */
-        }
-        header ul li a {
+        }}
+        header ul li {{
+            margin-right: 70px;
+        }}
+        header ul li a {{
             color: #fff;
             text-decoration: none;
-        }
-        .dropdown {
+        }}
+        .dropdown {{
             position: relative;
             display: inline-block;
-        }
-        .dropdown-content {
+        }}
+        .dropdown-content {{
             display: none;
             position: absolute;
             background-color: #f9f9f9;
             min-width: 160px;
             z-index: 1;
-        }
-        .dropdown-content a {
+        }}
+        .dropdown-content a {{
             color: black;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
-        }
-        .dropdown-content a:hover {
+        }}
+        .dropdown-content a:hover {{
             background-color: #f1f1f1;
-        }
-        .dropdown:hover .dropdown-content {
+        }}
+        .dropdown:hover .dropdown-content {{
             display: block;
-        }
-        .content {
+        }}
+        .content {{
             max-width: 800px;
-            margin: 0 auto; /* Center-align content and add margin */
-            padding: 20px; /* Add padding for better spacing */
-            background-color: #fff; /* White background for content */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
-        }
-        h2 {
-            margin-top: 0; /* Reset margin for headings */
-            color: #333; /* Darker color for headings */
-        }
-        p {
-            margin-bottom: 16px; /* Add margin at the bottom of paragraphs */
-            line-height: 1.6; /* Increase line height for better readability */
-            color: #555; /* Slightly darker color for text */
-        }
-        ol {
-            margin-left: 20px; /* Indent the ordered list */
-        }
-        strong {
-            font-weight: bold; /* Use font-weight property for boldness */
-            color: #333; /* Darker color for bold text */
-        }
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        h2 {{
+            margin-top: 0;
+            color: #333;
+        }}
+        p {{
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: #555;
+        }}
+        ol {{
+            margin-left: 20px;
+        }}
+        strong {{
+            font-weight: bold;
+            color: #333;
+        }}
     </style>
 </head>
 <body>
     <header>
-        <!-- ... Rest of your header content ... -->
+        <h1>STOCK.AI</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)">Stocks</a>
+                    <div class="dropdown-content">
+                        <a href="/sp500/sp500">S&P500</a>
+                        <a href="/ibex35/ibex35">IBEX35</a>
+                        <a href="/nasdq/nasdq">NASDQ</a>
+                    </div>
+                </li>
+                <li><a href="/">Currency</a></li>
+            </ul>
+        </nav>
     </header>
     <section class="content">
         <h2>Why Use AI?</h2>
@@ -164,6 +182,8 @@ html_template = """
 </body>
 </html>
 """
+
+
 
 # Replace the placeholder with the correlation table HTML
 html_template = html_template.format(correlation_table_html=correlation_table_html)
